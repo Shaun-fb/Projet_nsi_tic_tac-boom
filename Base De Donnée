@@ -1,1 +1,44 @@
+CREATE TABLE Joueurs(
+   id_joueur INT,
+   nom VARCHAR(50),
+   PRIMARY KEY(id_joueur)
+);
+
+CREATE TABLE Tours(
+   id_tour INT,
+   ordre_jeu VARCHAR(50),
+   PRIMARY KEY(id_tour)
+);
+
+CREATE TABLE Mots(
+   id_mot INT,
+   mot VARCHAR(100),
+   id_joueur INT NOT NULL,
+   PRIMARY KEY(id_mot),
+   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur)
+);
+
+CREATE TABLE Syllabes(
+   id_syllabe INT,
+   syllabe VARCHAR(50),
+   id_tour INT NOT NULL,
+   PRIMARY KEY(id_syllabe),
+   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
+);
+
+CREATE TABLE tour_par_tour(
+   id_joueur INT,
+   id_tour INT,
+   PRIMARY KEY(id_joueur, id_tour),
+   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur),
+   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
+);
+
+CREATE TABLE composé(
+   id_mot INT,
+   id_syllabe INT,
+   PRIMARY KEY(id_mot, id_syllabe),
+   FOREIGN KEY(id_mot) REFERENCES Mots(id_mot),
+   FOREIGN KEY(id_syllabe) REFERENCES Syllabes(id_syllabe)
+);
 
