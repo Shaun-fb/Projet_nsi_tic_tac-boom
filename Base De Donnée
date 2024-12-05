@@ -4,20 +4,18 @@ CREATE TABLE Joueurs(
    PRIMARY KEY(id_joueur)
 );
 
-CREATE TABLE Tours(
-   id_tour INT,
-   ordre_jeu VARCHAR(50),
-   PRIMARY KEY(id_tour)
+CREATE TABLE Syllabes(
+   id_syllabe INT,
+   syllabe VARCHAR(50),
+   PRIMARY KEY(id_syllabe)
 );
 
 CREATE TABLE Temps(
    temp_tour TIME,
    temps_réponce TIME,
    id_joueur INT NOT NULL,
-   id_tour INT NOT NULL,
    PRIMARY KEY(temp_tour),
-   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur),
-   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
+   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur)
 );
 
 CREATE TABLE Mots(
@@ -28,23 +26,7 @@ CREATE TABLE Mots(
    FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur)
 );
 
-CREATE TABLE Syllabes(
-   id_syllabe INT,
-   syllabe VARCHAR(50),
-   id_tour INT NOT NULL,
-   PRIMARY KEY(id_syllabe),
-   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
-);
-
-CREATE TABLE tour_par_tour(
-   id_joueur INT,
-   id_tour INT,
-   PRIMARY KEY(id_joueur, id_tour),
-   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur),
-   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
-);
-
-CREATE TABLE composé(
+CREATE TABLE contient(
    id_mot INT,
    id_syllabe INT,
    PRIMARY KEY(id_mot, id_syllabe),
