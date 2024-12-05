@@ -10,6 +10,16 @@ CREATE TABLE Tours(
    PRIMARY KEY(id_tour)
 );
 
+CREATE TABLE Temps(
+   temp_tour TIME,
+   temps_réponce TIME,
+   id_joueur INT NOT NULL,
+   id_tour INT NOT NULL,
+   PRIMARY KEY(temp_tour),
+   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur),
+   FOREIGN KEY(id_tour) REFERENCES Tours(id_tour)
+);
+
 CREATE TABLE Mots(
    id_mot INT,
    mot VARCHAR(100),
@@ -41,4 +51,3 @@ CREATE TABLE composé(
    FOREIGN KEY(id_mot) REFERENCES Mots(id_mot),
    FOREIGN KEY(id_syllabe) REFERENCES Syllabes(id_syllabe)
 );
-
