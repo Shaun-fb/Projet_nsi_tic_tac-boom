@@ -1,35 +1,40 @@
 CREATE TABLE Joueurs(
-   id_joueur INT,
+   id_joueurs INT,
    nom VARCHAR(50),
-   PRIMARY KEY(id_joueur)
+   PRIMARY KEY(id_joueurs)
 );
 
-CREATE TABLE Syllabes(
-   id_syllabe INT,
+CREATE TABLE Sylllabes(
+   id_syllabes ,
    syllabe VARCHAR(50),
-   PRIMARY KEY(id_syllabe)
+   PRIMARY KEY(id_syllabes)
 );
 
 CREATE TABLE Temps(
-   temp_tour TIME,
-   temps_réponce TIME,
-   id_joueur INT NOT NULL,
-   PRIMARY KEY(temp_tour),
-   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur)
+   temps_cycle TIME,
+   PRIMARY KEY(temps_cycle)
 );
 
 CREATE TABLE Mots(
    id_mot INT,
    mot VARCHAR(100),
-   id_joueur INT NOT NULL,
+   id_joueurs INT NOT NULL,
    PRIMARY KEY(id_mot),
-   FOREIGN KEY(id_joueur) REFERENCES Joueurs(id_joueur)
+   FOREIGN KEY(id_joueurs) REFERENCES Joueurs(id_joueurs)
 );
 
 CREATE TABLE contient(
    id_mot INT,
-   id_syllabe INT,
-   PRIMARY KEY(id_mot, id_syllabe),
+   id_syllabes ,
+   PRIMARY KEY(id_mot, id_syllabes),
    FOREIGN KEY(id_mot) REFERENCES Mots(id_mot),
-   FOREIGN KEY(id_syllabe) REFERENCES Syllabes(id_syllabe)
+   FOREIGN KEY(id_syllabes) REFERENCES Sylllabes(id_syllabes)
+);
+
+CREATE TABLE réponce(
+   id_joueurs INT,
+   temps_cycle TIME,
+   PRIMARY KEY(id_joueurs, temps_cycle),
+   FOREIGN KEY(id_joueurs) REFERENCES Joueurs(id_joueurs),
+   FOREIGN KEY(temps_cycle) REFERENCES Temps(temps_cycle)
 );
