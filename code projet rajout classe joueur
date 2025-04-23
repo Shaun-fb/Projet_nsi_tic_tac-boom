@@ -1,0 +1,223 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov 28 17:29:17 2024
+
+@author: HENRYY
+"""
+
+import mysql.connector
+import threading
+import time
+import random
+
+
+# co a la database
+mydb = mysql.connector.connect(
+    host ='0504-srv-sig',
+    database ='nsi_eleve5',
+    user ='nsi_eleve5',
+    password ='eleve5'
+)
+print(mydb)
+
+cursor = mydb.cursor()
+
+# dictionnaire mot / sylabes
+
+mots_jeux = {
+             "jeu", "console", "manette", "écran", "son", "musique", "effet",
+             "ambiance", "menu", "option", "sauvegarde", "déconnexion",
+             "installation", "patch", "test", "création", "programmation", 
+             "erreur", "débogage", "carte", "zone", "niveau", "mission",
+             "objectif", "boss", "ennemis", "monstres", "personnage", "armes",
+             "bouclier", "épée", "hache", "arc", "flèche", "lance", "pouvoir",
+             "sort", "magie", "compétence", "attaque", "défense", "vitesse",
+             "saut", "course", "combat", "fuir", "tirer", "cibler", "franchir",
+             "collecter", "inventaire", "potion", "santé", "vie", 
+             "régénération", "recharge", "batterie", "objet", "clé", "monnaie",
+             "argent", "magasin", "boutique", "niveau", "evolution",
+             "progression", "amélioration", "récompense", "succès",
+             "équipement", "vêtements", "casque", "gants", "bottes", "armure",
+             "combinaison", "pack", "bonus", "contenu", "édition",
+             "version", "téléchargement", "vidéo", "image",
+             "graphisme", "animation", "simulation", "exploration",
+             "histoire", "narration", "dialogue", "scénario", "cinématique",
+             "suspense", "intrigue", "décision", "choix", "fin", "debut",
+             "moyen", "équilibre", "difficulté", "défi", "challenge",
+             "réaction", "temps", "chronomètre", "compteur", "pause",
+             "limite", "sélection", "choisir", "modifier", "valider",
+             "enregistrer", "reprendre", "quitter", "continuer", "commencer",
+             "redémarrer", "retour", "terminer", "terminé", "progresser",
+             "échouer", "réussir", "victoire", "défaite", "avancer", "reculer",
+             "bouger", "sauter", "plonger", "courir", "ramper", "escalader",
+             "descendre", "monter", "lancer", "attraper", "cacher", "trouver",
+             "créer", "modder", "construire", "détruire", "fusionner", "casser", 
+             "réparer", "forger", "créer", "fabriquer", "découvrir", "explorer",
+             "chasser", "capturer", "éliminer", "sauver", "protéger", "détruire",
+             "sauter", "enchaîner", "combo", "enigme", "puzzle", "résoudre",
+             "clé", "passage", "puzzle", "labyrinthe", "piège", "évasion",
+             "cachette", "sortie", "voie", "chemin", "route", "zone", "secteur",
+             "quartier", "terrain", "terrain", "plateau", "obstacle", "clé",
+             "passage", "verrou", "objectif", "mission", "tâche", "récompense",
+             "bonus", "niveau", "score", "ennemis", "guerrier", "mage", "archer",
+             "soigneur", "voleur", "assassin", "chasseur", "rôdeur", "combat",
+             "arme", "attaque", "défense", "pouvoir", "magie", "dégâts", "dommages",
+             "vie", "santé", "énergie", "récupérer", "bonus", "récupération", 
+             "médailles", "entraînement", "compétition", "match", "tournoi", 
+             "champion", "équipe", "coéquipier", "rival", "champion",
+             "entraide", "collaboration", "compétition", "classement", "classement",
+             "record", "réussite", "challenge", "succès", "raté", "tentative",
+             "résultat", "soluce", "astuce", "guide", "tutoriel", "système", 
+             "statistiques", "score", "niveau", "point", "bonus", "récompenses",
+             "équipement", "rareté", "compte", "inscription", "profil", "paramètre",
+             "interface", "menu", "sélection", "option", "réglage", "améliorer",
+             "rétablir", "sauver", "modifier", "créer", "gérer", "mettre",
+             "activer", "désactiver", "changer", "redémarrer", "arrêter", 
+             "poursuivre", "mode", "joueur", "single", "multijoueur", "solo",
+             "coop", "matchmaking", "carte", "zone", "continent", "île", "région",
+             "ville", "ruines", "forêt", "désert", "montagne", "océan", "rivière",
+             "lac", "flotte", "mer", "caverne", "dungeon", "château", "village",
+             "zone", "arène", "battlefield", "terrain", "salle", "chambre", "pièce",
+             "passage", "entrée", "sortie", "passage", "zone", "prison", "abri",
+             "cachette", "labyrinthe", "repaire", "grange", "forteresse", "base",
+             "contrôle", "détection", "surveillance", "exploitation", "collecter",
+             "aide", "abonnement", "compte", "accès", "connexion", "inscription",
+             "sortie", "titre", "carte", "carte", "plan", "visualiser", "suivi",
+             "localisation", "exploration", "compter", "trier", "organiser",
+             "surveiller", "détection", "échange", "amélioration", "construction",
+             "activité", "avatar", "personnalisation", "niveau", "avancer",
+             "améliorer", "recharger", "prendre", "acheter", "vendre", "revendre",
+             "parcours", "mission", "objectifs", "trajet", "direction", "zone",
+             "carte", "secteur", "terrain", "explorateur", "chasseur", "guerrier",
+             "mage", "combattant", "défenseur", "soldat", "entraînement", "combat",
+             "rôle", "action", "mouvement", "passer", "traîner", "piège", "attirer",
+             "piéger", "objectif", "passage", "entrée", "sortie", "fin", "histoire",
+             "conclusion", "lancer", "lancer", "créer", "organiser", "combattre",
+             "survie", "élimination", "guider", "maîtrise", "magie", "technique",
+             "skill", "boss", "chef", "ennemis", "rival", "système", "objectif",
+             "mission", "mode", "voyage", "téléportation", "carte", "moteur",
+             "graphisme", "sons", "espace", "design", "niveau", "plateau", "réseau",
+             "graphique", "animation", "progression", "monde", "détour",
+             "naviguer", "combinaison", "avantages", "niveau", "capacités", "pouvoir",
+             "objectifs", "stratégie", "compte", "suivi", "mode", "choix", 
+             "objectif", "mission", "jeu", "debut", "fin", "progression",
+             "aventure", "action", "exploration", "rencontre", "aide", "quête",
+             "repos", "interruption", "sauvegarde", "recharge", "vie", "santé", 
+             "énergie", "défense", "attaque", "force", "faiblesse", "résistance",
+             "dégâts", "réduction", "protection", "élément", "magie", "énergie",
+             "rune", "cristal", "pouvoir", "équipement", "upgrade", "amélioration", 
+             "bonus", "rareté", "artéfact", "objets", "item", "pièce", "argent",
+             "équipement", "armure", "casque", "gants", "bottes", "bouclier", "épée",
+             "arc", "lance", "arbalète", "poignard", "dague", "hache", "bâton", "sort",
+             "magie", "pouvoir", "souhait", "invocation", "esquive", "attaque", "saut",
+             "tir", "tirer", "cibler", "lancer", "charger", "défense", "protection",
+             "blocus", "fuir", "capturer", "libérer", "piéger", "réagir", "récupérer",
+             "collecter", "trouver", "cacher", "filtrage", "utiliser", "obtenir",
+             "vendre", "acheter", "magasin", "commerce", "offre", "achat", "revendre",
+             "boutique", "argent", "rareté", "outils", "ressources", "miner", "forger",
+             "construire", "coudre", "préparer", "créer", "adapter", "personnaliser",
+             "joueur", "entraînement", "essayer", "test", "évaluation", "compétence",
+             "réussir", "échouer", "prendre", "attendre", "baisser", "redémarrer", 
+             "recommencer", "niveau", "zone", "stage", "plateau", "étape",
+             "sélectionner", "cibler", "combattre", "formation", "défi", "arène", 
+             "champion", "tournoi", "légende", "héros", "carte", "écran", 
+             "affichage", "résolution", "pixels", "graphismes", "animation", "3d",
+             "2d", "vision", "contrôle", "interface", "menu", "paramètre", "options",
+             "sélection", "choisir", "liste", "barre", "tactile", "toucher", "déplacement",
+             "glisser", "cliquer", "glisser", "faire", "action", "mouvement",
+             "interagir", "manipuler", "connecter", "se connecter", "compte", "créer",
+             "compte", "profil", "inscription", "connexion", "déconnexion",
+             "localisation", "emplacement", "partage", "accéder", "enregistrer",
+             "sauvegarder", "revenir", "fermer", "quitter", "retour", "changer"
+            }
+
+syllable = {
+            "je", "tu", "mi", "ra", "bo", "ma", "pa", "sa", "la", "ve", "se",
+            "do", "no", "me", "ti", "re", "fi", "ca", "zo", "bi", "ai", "li", 
+            "ko", "ho", "su", "ni", "ki", "ho", "de", "ou", "da", "go",
+            "bo", "do", "ta", "la", "pa", "pi", "ce", "lu", "si",
+            "za", "te", "nu", "mo", "su"
+           }
+
+
+def debut_partie(s):
+    """décompte avant partie"""
+    for i in range(s,0,-1):
+        print(i)
+        time.sleep(1)
+ 
+t=threading.Thread(target=debut_partie, args=[5])
+t.start()
+t.join()
+print('start game')
+
+
+def timer():
+    """décompte du temps de la partie"""
+    time.sleep(6)
+    temps = random.randint(120, 192) 
+    # Génère un temps aléatoire entre 120 et 192 secondes ( 2minutes à 3minutes30)
+    
+    while temps > 0:
+        time.sleep(1)
+        temps -= 1
+        if temps <= 0:
+            print("BOOM ! Le temps est écoulé ! FIN DE LA PARTIE ")
+            break
+    
+
+#Programme Principal
+
+print(timer())
+
+
+
+    
+# Choisir un premier joueur aléatoirement
+
+# renvoyer une syllabe au joueur sélectionné
+
+# Identifier si le mot donné correspond la syllabe en cours 
+
+# si le joueur échoue faire rejouer le même joueur sinon changer de joueur 
+
+
+
+#classe joueur 
+
+class Joueur: 
+    
+    def __init__(self, username, id_joueur, mdp):
+        self.username = username
+        self.id_joueur = id_joueur
+        self.mdp = mdp
+
+    def __str__(self):
+        chaine = f"Le joueur {self.username} a pour identifiant {self.id_joueur} et pour mot de passe {self.mdp}."
+        return chaine
+    
+    def inscription_joueur(self, username, id_joueur, mdp):
+        """
+        prend le nom et le mots de passe pour l'enregistrer dans la base de donnée pour pouvoir jouer et lui donne un id_joueur
+               
+        """
+        reference = (username, id_joueur, mdp)
+        cursor.execute("""INSERT INTO joueurs (username, id_joueur, mdp) VALUES(%s, %s, %s)""", reference)
+    
+    def connection(self,username,mdp):
+        """ 
+        utilise le nom et le mdp pour se connecter  pour jouer
+        
+        """
+        
+        
+        
+
+# programme principal
+
+
+
+joueur_1 = Joueur("shaun",1,"jesuis")
+joueur_1.inscription_joueur("shaun",1,"jesuis")
+
+
