@@ -5,20 +5,25 @@ Created on Thu Nov 28 17:29:17 2024
 @author: HENRYY
 """
 
+# -*- coding: utf-8 -*-
 import mysql.connector
 import threading
 import time
 import random
 
 
-# co a la database
-mydb = mysql.connector.connect(
-    host ='0504-srv-sig',
-    database ='nsi_eleve5',
-    user ='nsi_eleve5',
-    password ='eleve5'
-)
-print(mydb)
+# Connexion à la base de données
+try:
+    mydb = mysql.connector.connect(
+        host='0504-srv-sig',
+        database='nsi_eleve5',
+        user='nsi_eleve5',
+        password='eleve5'
+    )
+    print("Connexion réussie")
+except mysql.connector.Error as err:
+    print(f"Erreur de connexion: {err}")
+    exit()
 
 cursor = mydb.cursor()
 
@@ -185,7 +190,7 @@ print(timer())
 
 #classe joueur 
 
-class Joueur: 
+class Joueur:
     
     def __init__(self, username, id_joueur, mdp):
         self.username = username
@@ -193,31 +198,45 @@ class Joueur:
         self.mdp = mdp
 
     def __str__(self):
-        chaine = f"Le joueur {self.username} a pour identifiant {self.id_joueur} et pour mot de passe {self.mdp}."
-        return chaine
+        return f"Le joueur {self.username} a pour identifiant {self.id_joueur} et pour mot de passe {self.mdp}."
     
-    def inscription_joueur(self, username, id_joueur, mdp):
+    def inscription_joueur(self):
         """
-        prend le nom et le mots de passe pour l'enregistrer dans la base de donnée pour pouvoir jouer et lui donne un id_joueur
-               
+        Prend le nom, l'identifiant et le mot de passe pour enregistrer le joueur dans la base de données.
         """
-        reference = (username, id_joueur, mdp)
-        cursor.execute("""INSERT INTO joueurs (username, id_joueur, mdp) VALUES(%s, %s, %s)""", reference)
+        reference = (self.username, self.id_joueur, self.mdp)
+        try:
+            cursor.execute("""INSERT INTO joueurs (username, id_joueur, mdp) VALUES (%s, %s, %s)""", reference)
+            mydb.commit()  # On valide la transaction
+            print(f"Joueur {self.username} inscrit avec succès.")
+        except mysql.connector.Error as err:
+            print(f"Erreur lors de l'inscription : {err}")
     
-    def connection(self,username,mdp):
-        """ 
-        utilise le nom et le mdp pour se connecter  pour jouer
-        
-        """
-        
-        
-        
+    def connection(self):
+        """Utilise le nom d'utilisateur et le mot de passe pour se connecter."""
+        try:
+            cursor.execute("SELECT * FROM joueurs WHERE username = %s AND mdp = %s", (self.username, self.mdp))
+            result = cursor.fetchone()
+            if result:
+                print(f"{self.username} vous etes bien conecter!!!")
+                return True  # Connexion réussie
+            else:
+                print("Nom d'utilisateur ou mot de passe incorrect.")
+                return False  # Échec de la connexion
+        except mysql.connector.Error as err:
+            print(f"Erreur lors de la connexion : {err}")
+            return False
 
-# programme principal
+# Programme principal
+# Création d'un joueur et inscription
+joueur_1 = Joueur("shaun", 1, "jesuis")
+joueur_1.inscription_joueur()
 
+# Connexion du joueur
+if joueur_1.connection():
+    print("Le joueur peut maintenant jouer.")
+else:
+    print("Échec de la connexion.")
 
-
-joueur_1 = Joueur("shaun",1,"jesuis")
-joueur_1.inscription_joueur("shaun",1,"jesuis")
 
 
