@@ -239,4 +239,47 @@ else:
     print("Échec de la connexion.")
 
 
+# Fonction pour choisir une syllabe aléatoire et un mot contenant cette syllabe
+def choisir_syllabe():
+    """Choisit une syllabe au hasard et les mots contenant cette syllabe"""
+    syllabe_choisie = random.choice(list(syllable))
+    mots_valides = [mot for mot in mots_jeux if syllabe_choisie in mot]
+    return syllabe_choisie, mots_valides
 
+# Fonction principale du jeu
+def jouer():
+    """Lance le jeu et gère les joueurs"""
+    joueurs = [Joueur("joueur1", 1, "mdp1"), Joueur("joueur2", 2, "mdp2")]
+
+    # Choisir un premier joueur aléatoirement
+    premier_joueur = random.choice(joueurs)
+    print(f"Le joueur sélectionné est : {premier_joueur.username}")
+    syllabe, mots_valides = choisir_syllabe()
+    print(f"La syllabe à deviner est : {syllabe}")
+    # Partie jeu
+    while True:
+        if premier_joueur.connection():
+            print(f"{premier_joueur.username} peut jouer !")
+            
+            # Partie jeu
+            syllabe = choisir_syllabe()
+            print(f"La syllabe à deviner est : {syllabe}")
+
+            # Boucle pour le joueur jusqu'à ce qu'il trouve la bonne réponse
+            while True:
+                reponse = input(f"{premier_joueur.username}, devine un mot avec la syllabe {syllabe}: ")
+
+                if reponse in mots_valides:
+                    print(f"Bonne réponse ! Le mot {reponse} est correct.")
+                    break
+                else:
+                    print(f"Mauvaise réponse, réessaye avec la même syllabe.")
+                    continue  # Le joueur doit réessayer avec la même syllabe
+                    
+                premier_joueur = joueurs[0] if premier_joueur == joueurs[1] else joueurs[1]
+                print(f"C'est à {premier_joueur.username} maintenant")
+                break  # Revenir au début de la boucle pour distribuer une nouvelle syllabe
+        else:
+            print(f"Échec de la connexion de {premier_joueur.username}. Le joueur ne peut pas jouer.")
+#Programme principal
+jouer()
