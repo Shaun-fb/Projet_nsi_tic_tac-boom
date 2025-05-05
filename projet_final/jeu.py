@@ -19,6 +19,7 @@ ma_base = mysql.connector.connect(
 )
 curseur = ma_base.cursor()
 
+
 # Fonction d'inscription
 def inscription_joueur(pseudo, motdepasse):
     # Vérifier si le pseudo existe déjà
@@ -29,6 +30,7 @@ def inscription_joueur(pseudo, motdepasse):
         print(f" Nouveau joueur inscrit : {pseudo}")
     else:
         print(" Ce pseudo est déjà pris. Veuillez en choisir un autre.")
+
 
 # Fonction de connexion
 def connection(pseudo, motdepasse):
